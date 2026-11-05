@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repositorio DIGITALPODER</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: catálogo de biblioteca — banda de cabecera con la distribución por ejes, carril de filtros fijo a la izquierda y fichas en lista a la derecha */
+:root{
+  --paper:#f6f5f9; --surface:#ffffff; --ink:#1f1b2d; --muted:#5f5a70; --line:#dedae8; --soft:#eeebf5;
+  --accent:#5a3ea3; --accent-ink:#ffffff; --accent-soft:#ebe5f8; --focus:#c9a227;
+  --e1:#3d6fb6; --e2:#b25a2b; --e3:#2e8a6e; --e4:#8a5bb8; --e5:#a33d5f; --e6:#7a7a2a; --e7:#4b5563;
+  --display:"Newsreader", Georgia, "Times New Roman", serif;
+  --body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#15131c; --surface:#1d1a27; --ink:#ece9f4; --muted:#a6a0b8; --line:#332e42; --soft:#242030;
+  --accent:#b8a3f0; --accent-ink:#1a1530; --accent-soft:#2c2545; --focus:#e2c35a;
+  --e1:#7fa8e8; --e2:#e3925f; --e3:#5fc4a2; --e4:#bd94e6; --e5:#e07b9b; --e6:#c2c25a; --e7:#9aa3b2;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15131c; --surface:#1d1a27; --ink:#ece9f4; --muted:#a6a0b8; --line:#332e42; --soft:#242030;
+  --accent:#b8a3f0; --accent-ink:#1a1530; --accent-soft:#2c2545; --focus:#e2c35a;
+  --e1:#7fa8e8; --e2:#e3925f; --e3:#5fc4a2; --e4:#bd94e6; --e5:#e07b9b; --e6:#c2c25a; --e7:#9aa3b2;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{border-bottom:1px solid var(--line);background:var(--surface)}
+header.top .wrap{padding-block:28px 0;display:grid;gap:18px}
+.brand{display:flex;gap:18px;align-items:flex-start}
+.brand img{width:40px;height:auto;flex:none}
+.brand h1{font-family:var(--display);font-weight:500;font-size:clamp(1.7rem,3.4vw,2.5rem);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.brand p{margin:4px 0 0;color:var(--muted);max-width:68ch}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.dist{display:grid;gap:8px}
+.distbar{display:flex;height:10px;border-radius:2px;overflow:hidden;background:var(--soft)}
+.distbar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted)}
+.legend button{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center;border-radius:3px}
+.legend button:hover{color:var(--ink)}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+.legend b{font-family:var(--mono);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+
+nav.tabs{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
+nav.tabs a{padding:10px 14px;text-decoration:none;color:var(--muted);font-weight:600;font-size:.9rem;border-bottom:2px solid transparent;white-space:nowrap}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-color:var(--accent)}
+nav.tabs a:hover{color:var(--ink)}
+
+main .wrap{padding-block:24px 56px}
+.cat{display:grid;grid-template-columns:270px minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:860px){.cat{grid-template-columns:minmax(0,1fr)}}
+
+aside.filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:grid;gap:22px;max-height:calc(100vh - 24px);overflow:auto;padding-right:4px}
+@media (max-width:860px){aside.filters{position:static;max-height:none;overflow:visible}
+  aside.filters[data-closed="true"] .fgroups{display:none}}
+.btn.ftoggle{display:none}
+@media (max-width:860px){.btn.ftoggle{display:inline-flex}}
+.fgroups{display:grid;gap:22px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:4px}
+legend.fl{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;padding:0}
+.opt{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;font-size:.88rem;padding:3px 4px;border-radius:4px;cursor:pointer}
+.opt:hover{background:var(--soft)}
+.opt input{accent-color:var(--accent);margin:0}
+.opt .c{font-family:var(--mono);font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.opt.zero{opacity:.45}
+.opt .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.focus-row{display:flex;flex-wrap:wrap;gap:6px}
+.years{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.yb{all:unset;cursor:pointer;display:grid;gap:3px;justify-items:center;padding:6px 2px 4px;border-radius:4px;border:1px solid var(--line);font-family:var(--mono);font-size:.74rem;background:var(--surface)}
+.yb .bar{width:70%;height:24px;display:flex;align-items:flex-end}
+.yb .bar span{display:block;width:100%;background:var(--accent);opacity:.35;border-radius:1px}
+.yb[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.yb[aria-pressed="true"] .bar span{opacity:1}
+.yb:hover{border-color:var(--accent)}
+
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:.84rem;font-weight:600;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:transparent;padding-inline:6px;color:var(--accent)}
+.btn.ghost:hover{text-decoration:underline}
+
+.searchbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:0 14px}
+.search:focus-within{border-color:var(--accent)}
+.search svg{flex:none;color:var(--muted)}
+.search input{all:unset;flex:1;min-width:0;padding:12px 0;font-size:1rem;color:var(--ink)}
+select{font:inherit;font-size:.86rem;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.status{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.status .n{font-family:var(--display);font-size:1.25rem}
+.status .n b{font-weight:600;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{all:unset;cursor:pointer;font-size:.78rem;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--ink);display:inline-flex;gap:6px;align-items:center}
+.chip:hover{text-decoration:line-through}
+
+ol.results{list-style:none;margin:0;padding:0;display:grid}
+.rec{border-top:1px solid var(--line);padding:18px 0;display:grid;gap:6px}
+.rec:last-child{border-bottom:1px solid var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:.8rem;color:var(--muted)}
+.yr{font-family:var(--mono);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.ej{display:inline-flex;align-items:center;gap:5px;font-weight:600}
+.ej i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.geo{display:inline-flex;gap:4px;flex-wrap:wrap}
+.geo span{font-size:.72rem;padding:1px 7px;border-radius:3px;border:1px solid var(--line)}
+.geo span.f{border-color:var(--accent);color:var(--accent);font-weight:600}
+.rec h3{font-family:var(--display);font-weight:500;font-size:1.18rem;line-height:1.3;margin:0;text-wrap:pretty}
+.rec h3 button{all:unset;cursor:pointer}
+.rec h3 button:hover{color:var(--accent)}
+.by{font-size:.9rem}
+.by b{font-weight:600}
+.by em{color:var(--muted)}
+.tema{font-size:.86rem;color:var(--muted);margin:0;max-width:80ch}
+.detail{display:grid;gap:12px;margin-top:6px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.detail dl{margin:0;display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 18px}
+@media (max-width:560px){.detail dl{grid-template-columns:minmax(0,1fr)} .detail dd{margin-bottom:6px}}
+.detail dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.detail dd{margin:0;font-size:.9rem;overflow-wrap:anywhere}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.more{display:flex;justify-content:center;margin-top:22px}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;font-size:.86rem;z-index:20}
+
+/* Fuentes */
+.fu-intro{max-width:70ch;color:var(--muted);margin:0 0 22px}
+.fu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:28px 32px}
+.fu-group h2{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.fu-group ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.fu-group li{display:grid;gap:2px}
+.fu-group li a,.fu-group li strong{font-weight:600;font-size:.94rem}
+.fu-group li span{font-size:.82rem;color:var(--muted)}
+
+/* Acerca */
+.about{max-width:70ch;display:grid;gap:18px}
+.about h2{font-family:var(--display);font-weight:500;font-size:1.45rem;margin:12px 0 0}
+.about p{margin:0}
+.about ol{margin:0;padding-left:1.3em;display:grid;gap:6px}
+.about .fine{font-size:.84rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
+footer .wrap{padding-block:20px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+[hidden]{display:none!important}
+body{margin:0}
+img{max-width:100%}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <img src="assets/digitalpoder.png" alt="Logotipo de DIGITALPODER">
+      <div>
+        <div class="eyebrow">DIGITALPODER · Universidad de Granada</div>
+        <h1>Repositorio temático de digitalización, género y África</h1>
+        <p>Bibliografía científica e institucional sobre banca móvil, emprendimiento femenino y transición digital, con atención especial a Guinea-Bisáu y Cabo Verde.</p>
+      </div>
+    </div>
+    <div class="dist" aria-label="Distribución de referencias por eje temático">
+      <div class="distbar" id="distbar"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <nav class="tabs" aria-label="Secciones">
+      <a href="#catalogo" data-view="catalogo">Catálogo</a>
+      <a href="#fuentes" data-view="fuentes">Fuentes y bases de datos</a>
+      <a href="#acerca" data-view="acerca">Acerca del repositorio</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section id="v-catalogo" class="cat">
+      <aside class="filters" id="filters" data-closed="true" aria-label="Filtros">
+        <button class="btn ftoggle" id="ftoggle" aria-expanded="false" aria-controls="fgroups">Mostrar filtros</button>
+        <div class="fgroups" id="fgroups">
+          <fieldset>
+            <legend class="fl">Foco del proyecto</legend>
+            <div class="focus-row">
+              <button class="btn" data-focus="gb" aria-pressed="false">Guinea-Bisáu</button>
+              <button class="btn" data-focus="cv" aria-pressed="false">Cabo Verde</button>
+            </div>
+          </fieldset>
+          <fieldset id="f-e"><legend class="fl">Eje temático</legend></fieldset>
+          <fieldset id="f-g"><legend class="fl">Ámbito geográfico</legend></fieldset>
+          <fieldset><legend class="fl">Año de publicación</legend><div class="years" id="f-y"></div></fieldset>
+          <fieldset id="f-ty"><legend class="fl">Tipo de documento</legend></fieldset>
+          <fieldset id="f-l"><legend class="fl">Idioma del título</legend></fieldset>
+          <fieldset>
+            <legend class="fl">Acceso</legend>
+            <label class="opt"><input type="checkbox" id="f-url"><span>Solo con enlace o DOI</span><span class="c" id="c-url"></span></label>
+          </fieldset>
+        </div>
+      </aside>
+
+      <div>
+        <div class="searchbar">
+          <label class="search" for="q">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input id="q" type="search" placeholder="Busca por autoría, título, tema, revista o país" autocomplete="off">
+          </label>
+          <select id="sort" aria-label="Ordenar">
+            <option value="new">Más recientes</option>
+            <option value="old">Más antiguos</option>
+            <option value="az">Autoría A–Z</option>
+          </select>
+        </div>
+        <div class="status">
+          <div class="n" id="count" aria-live="polite"></div>
+          <div class="actions">
+            <button class="btn ghost" id="clear" hidden>Limpiar filtros</button>
+            <button class="btn" id="copyall">Copiar referencias de esta selección</button>
+          </div>
+        </div>
+        <div class="chips" id="chips"></div>
+        <ol class="results" id="results"></ol>
+        <div class="more"><button class="btn" id="more" hidden>Mostrar más</button></div>
+      </div>
+    </section>
+
+    <section id="v-fuentes" hidden>
+      <p class="fu-intro">Eje 7 de la sistematización: dónde buscar. Bases de datos, repositorios, revistas especializadas e instituciones que publican datos e informes sobre género, digitalización e inclusión financiera en los países del proyecto.</p>
+      <div class="fu-grid" id="fu"></div>
+    </section>
+
+    <section id="v-acerca" hidden>
+      <div class="about">
+        <h2>Qué es este repositorio</h2>
+        <p>Reúne la bibliografía que el equipo de DIGITALPODER ha localizado y sistematizado en repositorios y bibliotecas internacionales. Cada ficha recoge la referencia, la fuente, el tema clave, el método o los datos utilizados y los hallazgos principales, para que cualquier persona que investigue estos temas pueda valorar un texto antes de buscarlo.</p>
+        <h2>Cómo está organizado</h2>
+        <p>Las referencias siguen los siete ejes de la sistematización temática del proyecto.</p>
+        <ol id="ejes-list"></ol>
+        <p>Una referencia puede aparecer en más de un eje. El ámbito geográfico se asigna a partir del país o la región que estudia el texto, y el foco del proyecto marca los trabajos que tratan Guinea-Bisáu o Cabo Verde.</p>
+        <h2>Criterios</h2>
+        <p>La búsqueda prioriza la producción de los últimos cinco años (2020–2026), con algunas obras anteriores de referencia. El repositorio no aloja textos completos de terceros. Cuando existe, cada ficha enlaza al DOI o a la página del editor; en los demás casos ofrece una búsqueda directa en Google Académico.</p>
+        <h2>Proponer una referencia</h2>
+        <p>Si conoces un trabajo pertinente que no aparece aquí, envíalo al equipo de DIGITALPODER con su referencia completa y, si es posible, su DOI.</p>
+        <p class="fine">Proyecto «Procesos de digitalización, desarrollo e igualdad de género en África: Bancas móviles y empoderamiento femenino digital» (DIGITALPODER), referencia PID2024-161343OB-I00. Ministerio de Ciencia, Innovación y Universidades, Agencia Estatal de Investigación. Cofinanciado por la Unión Europea. Universidad de Granada, grupo AFRICAInEs. Ejecución: septiembre de 2025 a agosto de 2028.</p>
+      </div>
+    </section>
+  </div>
+</main>
+<footer><div class="wrap" id="foot"></div></footer>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+function start(DATA){
+const EJES = {1:"Tecnológico",2:"Emprendimiento y empoderamiento económico",3:"Compatibilidad cultural y apropiación tecnológica",4:"Estrategias regionales y gobernanza africana",5:"Marco teórico",6:"Contextos"};
+const EJE_SHORT = {1:"Tecnológico",2:"Emprendimiento",3:"Compatibilidad cultural",4:"Gobernanza regional",5:"Marco teórico",6:"Contextos"};
+const GEO = {gb:"Guinea-Bisáu",cv:"Cabo Verde",tz:"Tanzania",ao:"África Occidental (CEDEAO / UEMOA)",aor:"África Oriental",otr:"Otros países africanos",af:"África subsahariana y continental",gl:"Global y comparativo"};
+const GEO_SHORT = {gb:"Guinea-Bisáu",cv:"Cabo Verde",tz:"Tanzania",ao:"África Occ.",aor:"África Or.",otr:"Otros África",af:"África",gl:"Global"};
+const TIPO = {articulo:"Artículo científico",informe:"Informe o documento institucional",capitulo:"Capítulo o actas",libro:"Libro",preprint:"Preprint o documento de trabajo",tesis:"Tesis o TFM"};
+const LANG = {en:"Inglés",pt:"Portugués",es:"Español",fr:"Francés"};
+const R = DATA.refs;
+const $ = s => document.querySelector(s);
+const norm = s => (s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+R.forEach(r => { r._s = norm([r.a,r.t,r.f,r.k,r.p,r.h,r.m].join(" ")); });
+const YEARS = [2019,2020,2021,2022,2023,2024,2025,2026];
+const yKey = y => y==null ? null : (y<2020 ? 2019 : (y>2026 ? 2026 : y));
+
+const st = {q:"", e:new Set(), g:new Set(), y:new Set(), ty:new Set(), l:new Set(), url:false, sort:"new", shown:30, open:new Set()};
+
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function matches(r, skip){
+  if (st.q){ const terms = norm(st.q).split(/\s+/).filter(Boolean); if (!terms.every(t=>r._s.includes(t))) return false; }
+  if (skip!=="e" && st.e.size && !r.e.some(x=>st.e.has(x))) return false;
+  if (skip!=="g" && st.g.size && !r.g.some(x=>st.g.has(x))) return false;
+  if (skip!=="y" && st.y.size && !st.y.has(yKey(r.y))) return false;
+  if (skip!=="ty" && st.ty.size && !st.ty.has(r.ty)) return false;
+  if (skip!=="l" && st.l.size && !st.l.has(r.l)) return false;
+  if (skip!=="url" && st.url && !r.u) return false;
+  return true;
+}
+
+function buildOptions(id, map, key, colors){
+  const fs = $(id);
+  Object.keys(map).forEach(k=>{
+    const lab = document.createElement("label"); lab.className="opt";
+    const sw = colors ? `<i class="sw" style="background:var(--e${k})"></i>` : "";
+    lab.innerHTML = `<input type="checkbox" id="${key}-${k}" data-k="${k}"><span>${sw}${colors?k+". ":""}${esc(map[k])}</span><span class="c"></span>`;
+    lab.querySelector("input").addEventListener("change", ev=>{
+      const v = key==="e" ? +k : k;
+      ev.target.checked ? st[key].add(v) : st[key].delete(v);
+      if (key==="g") syncFocus();
+      st.shown=30; render();
+    });
+    fs.appendChild(lab);
+  });
+}
+buildOptions("#f-e", EJES, "e", true);
+buildOptions("#f-g", GEO, "g");
+buildOptions("#f-ty", TIPO, "ty");
+buildOptions("#f-l", LANG, "l");
+
+const yWrap = $("#f-y");
+YEARS.forEach(y=>{
+  const b = document.createElement("button"); b.className="yb"; b.dataset.y=y; b.setAttribute("aria-pressed","false");
+  b.innerHTML = `<span class="bar"><span></span></span><span>${y===2019?"≤2019":y}</span>`;
+  b.addEventListener("click",()=>{ st.y.has(y)?st.y.delete(y):st.y.add(y); st.shown=30; render(); });
+  yWrap.appendChild(b);
+});
+const totalByYear = {}; R.forEach(r=>{const k=yKey(r.y); if(k) totalByYear[k]=(totalByYear[k]||0)+1;});
+const maxY = Math.max(...Object.values(totalByYear));
+
+document.querySelectorAll("[data-focus]").forEach(b=>b.addEventListener("click",()=>{
+  const k=b.dataset.focus; st.g.has(k)?st.g.delete(k):st.g.add(k);
+  const cb=$("#g-"+k); if(cb) cb.checked=st.g.has(k); syncFocus(); st.shown=30; render();
+}));
+function syncFocus(){document.querySelectorAll("[data-focus]").forEach(b=>b.setAttribute("aria-pressed",st.g.has(b.dataset.focus)))}
+
+$("#f-url").addEventListener("change",e=>{st.url=e.target.checked; st.shown=30; render();});
+let qt; $("#q").addEventListener("input",e=>{clearTimeout(qt); qt=setTimeout(()=>{st.q=e.target.value.trim(); st.shown=30; render();},140);});
+$("#sort").addEventListener("change",e=>{st.sort=e.target.value; render();});
+$("#more").addEventListener("click",()=>{st.shown+=30; render();});
+$("#clear").addEventListener("click",()=>{
+  st.q="";$("#q").value="";["e","g","y","ty","l"].forEach(k=>st[k].clear());st.url=false;$("#f-url").checked=false;
+  document.querySelectorAll(".fgroups input[type=checkbox]").forEach(c=>c.checked=false); syncFocus(); st.shown=30; render();
+});
+$("#ftoggle").addEventListener("click",()=>{
+  const f=$("#filters"); const closed=f.dataset.closed==="true"; f.dataset.closed=String(!closed);
+  $("#ftoggle").setAttribute("aria-expanded",String(closed)); $("#ftoggle").textContent = closed?"Ocultar filtros":"Mostrar filtros";
+});
+
+function cite(r){
+  let s = `${r.a}. ${r.t}. ${r.f}.`;
+  if (r.u) s += ` ${r.u}`;
+  return s.replace(/\.\.+/g,".").replace(/\s+/g," ").trim();
+}
+function scholar(r){return "https://scholar.google.com/scholar?q="+encodeURIComponent(r.t)}
+
+let toastT;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
+async function copy(text,msg){
+  try{ await navigator.clipboard.writeText(text); toast(msg); }
+  catch(e){
+    const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
+    let ok=false; try{ok=document.execCommand("copy")}catch(_){}
+    ta.remove(); toast(ok?msg:"No se pudo copiar. Selecciona el texto a mano.");
+  }
+}
+
+function sorted(list){
+  const a=[...list];
+  if(st.sort==="new") a.sort((x,y)=>(y.y||0)-(x.y||0)||x.a.localeCompare(y.a,"es"));
+  else if(st.sort==="old") a.sort((x,y)=>(x.y||9999)-(y.y||9999)||x.a.localeCompare(y.a,"es"));
+  else a.sort((x,y)=>x.a.localeCompare(y.a,"es"));
+  return a;
+}
+
+function recHTML(r){
+  const ejes = r.e.map(e=>`<span class="ej" style="color:var(--e${e})"><i style="background:var(--e${e})"></i>${e}. ${EJE_SHORT[e]}</span>`).join("");
+  const geo = r.g.map(g=>`<span class="${g==="gb"||g==="cv"?"f":""}">${GEO_SHORT[g]}</span>`).join("");
+  const open = st.open.has(r.i);
+  let det = "";
+  if (open){
+    const rows = [["País o región",r.p],["Tema clave",r.k],["Método o datos",r.m],["Hallazgos clave",r.h],["Tipo",TIPO[r.ty]],["Idioma del título",LANG[r.l]],["Archivo del equipo",r.d?`${esc(r.d)} <span style="color:var(--muted)">(carpeta del proyecto en Drive)</span>`:""]]
+      .filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${k==="Archivo del equipo"?v:esc(v)}</dd>`).join("");
+    const link = r.u ? `<a class="btn primary" href="${esc(r.u)}" target="_blank" rel="noopener">${/doi\.org/.test(r.u)?"Abrir DOI":"Abrir enlace"}</a>`
+                     : `<a class="btn primary" href="${scholar(r)}" target="_blank" rel="noopener">Buscar en Google Académico</a>`;
+    det = `<div class="detail" id="d-${r.i}"><dl>${rows}</dl><div class="actions">${link}<button class="btn" data-cite="${r.i}">Copiar referencia</button></div></div>`;
+  }
+  return `<li class="rec">
+    <div class="meta"><span class="yr">${esc(r.yr||"s. f.")}</span>${ejes}<span class="geo">${geo}</span></div>
+    <h3><button data-open="${r.i}" aria-expanded="${open}" aria-controls="d-${r.i}">${esc(r.t)}</button></h3>
+    <div class="by"><b>${esc(r.a)}</b>${r.f?` · <em>${esc(r.f)}</em>`:""}</div>
+    ${r.k && !open?`<p class="tema">${esc(r.k)}</p>`:""}
+    ${det}
+  </li>`;
+}
+
+function setCounts(fsId, key, list){
+  document.querySelectorAll(fsId+" .opt").forEach(lab=>{
+    const k = lab.querySelector("input").dataset.k; const v = key==="e"?+k:k;
+    const n = list.filter(r=> key==="e"||key==="g" ? r[key].includes(v) : r[key]===v).length;
+    lab.querySelector(".c").textContent=n; lab.classList.toggle("zero", n===0 && !lab.querySelector("input").checked);
+  });
+}
+
+function render(){
+  const res = R.filter(r=>matches(r));
+  ["e","g","ty","l"].forEach(k=>setCounts("#f-"+k,k,R.filter(r=>matches(r,k))));
+  const yl = R.filter(r=>matches(r,"y")); const yc={}; yl.forEach(r=>{const k=yKey(r.y); if(k) yc[k]=(yc[k]||0)+1;});
+  document.querySelectorAll(".yb").forEach(b=>{const y=+b.dataset.y; const n=yc[y]||0; b.setAttribute("aria-pressed",st.y.has(y)); b.querySelector(".bar span").style.height=Math.max(2,Math.round(24*n/maxY))+"px"; b.title=`${n} referencias`; b.setAttribute("aria-label",`${y===2019?"2019 o antes":y}: ${n} referencias`);});
+  $("#c-url").textContent = R.filter(r=>matches(r,"url")&&r.u).length;
+
+  const s = sorted(res);
+  $("#count").innerHTML = `<b>${res.length}</b> ${res.length===1?"referencia":"referencias"}${res.length!==R.length?` de ${R.length}`:""}`;
+  $("#results").innerHTML = s.length ? s.slice(0,st.shown).map(recHTML).join("") : `<li class="empty">Ninguna referencia cumple estos filtros. Prueba a quitar alguno o a buscar otro término.</li>`;
+  $("#more").hidden = s.length<=st.shown; $("#more").textContent=`Mostrar más (${s.length-st.shown} restantes)`;
+  $("#copyall").disabled = !s.length;
+
+  const chips=[];
+  if(st.q) chips.push(["q",null,`«${st.q}»`]);
+  st.e.forEach(v=>chips.push(["e",v,`${v}. ${EJE_SHORT[v]}`]));
+  st.g.forEach(v=>chips.push(["g",v,GEO[v]]));
+  [...st.y].sort().forEach(v=>chips.push(["y",v,v===2019?"2019 o antes":String(v)]));
+  st.ty.forEach(v=>chips.push(["ty",v,TIPO[v]]));
+  st.l.forEach(v=>chips.push(["l",v,LANG[v]]));
+  if(st.url) chips.push(["url",null,"Con enlace o DOI"]);
+  $("#chips").innerHTML = chips.map(([k,v,l])=>`<button class="chip" data-ck="${k}" data-cv="${v??""}" aria-label="Quitar filtro ${esc(l)}">${esc(l)} <span aria-hidden="true">×</span></button>`).join("");
+  $("#clear").hidden = !chips.length;
+}
+
+$("#chips").addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return; const k=b.dataset.ck, v=b.dataset.cv;
+  if(k==="q"){st.q="";$("#q").value="";}
+  else if(k==="url"){st.url=false;$("#f-url").checked=false;}
+  else { const val = (k==="e"||k==="y")?+v:v; st[k].delete(val); const cb=$(`#${k}-${v}`); if(cb) cb.checked=false; if(k==="g") syncFocus(); }
+  st.shown=30; render();
+});
+$("#results").addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]"); if(o){const i=+o.dataset.open; st.open.has(i)?st.open.delete(i):st.open.add(i); render(); const nb=document.querySelector(`[data-open="${i}"]`); if(nb) nb.focus(); return;}
+  const c=e.target.closest("[data-cite]"); if(c){const r=R.find(x=>x.i===+c.dataset.cite); copy(cite(r),"Referencia copiada");}
+});
+$("#copyall").addEventListener("click",()=>{
+  const s=sorted(R.filter(r=>matches(r))); copy(s.map(cite).join("\n"), `${s.length} referencias copiadas`);
+});
+
+// Cabecera: distribución por ejes
+const ejeCount={}; R.forEach(r=>r.e.forEach(e=>ejeCount[e]=(ejeCount[e]||0)+1));
+const totE = Object.values(ejeCount).reduce((a,b)=>a+b,0);
+$("#distbar").innerHTML = Object.keys(EJES).map(e=>`<span style="width:${(100*(ejeCount[e]||0)/totE).toFixed(2)}%;background:var(--e${e})" title="${EJES[e]}: ${ejeCount[e]||0}"></span>`).join("");
+$("#legend").innerHTML = Object.keys(EJES).map(e=>`<button data-le="${e}"><i style="background:var(--e${e})"></i>${e}. ${EJE_SHORT[e]} <b>${ejeCount[e]||0}</b></button>`).join("") + `<button data-le="7"><i style="background:var(--e7)"></i>7. Documentación <b>${DATA.fuentes.length}</b></button>`;
+$("#legend").addEventListener("click",e=>{
+  const b=e.target.closest("[data-le]"); if(!b) return; const k=+b.dataset.le;
+  if(k===7){location.hash="fuentes";return;}
+  location.hash="catalogo"; st.e.clear(); st.e.add(k);
+  document.querySelectorAll("#f-e input").forEach(c=>c.checked=(+c.dataset.k===k)); st.shown=30; render();
+});
+$("#ejes-list").innerHTML = Object.keys(EJES).map(e=>`<li><b>${EJES[e]}</b> · ${ejeCount[e]||0} referencias</li>`).join("") + `<li><b>Documentación y fuentes</b> · ${DATA.fuentes.length} recursos, en la sección de fuentes</li>`;
+
+// Fuentes
+const FG = [["Bases de datos",/base de datos/i],["Repositorios",/repositorio/i],["Revistas especializadas",/revista/i],["Instituciones y datos estadísticos",/./]];
+const groups = FG.map(g=>[g[0],[]]);
+DATA.fuentes.forEach(f=>{ const idx = FG.findIndex(g=>g[1].test(f.t||"")); groups[idx<0?3:idx][1].push(f); });
+groups[0][1].push(...groups[3][1].filter(f=>!f.t)); groups[3][1]=groups[3][1].filter(f=>f.t);
+$("#fu").innerHTML = groups.filter(g=>g[1].length).map(([h,list])=>`<div class="fu-group"><h2>${h}</h2><ul>${list.map(f=>{
+  const name = f.u ? `<a href="${esc(f.u)}" target="_blank" rel="noopener">${esc(f.n)}</a>` : `<strong>${esc(f.n)}</strong>`;
+  const sub = [f.tm, f.i].filter(Boolean).join(" · ");
+  return `<li>${name}${sub?`<span>${esc(sub)}</span>`:""}</li>`;}).join("")}</ul></div>`).join("");
+
+const upd = DATA.actualizado ? new Date(DATA.actualizado.replace("Z",":00Z")).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"}) : "";
+$("#foot").textContent = `${R.length} referencias y ${DATA.fuentes.length} fuentes · Datos tomados de la matriz bibliográfica de DIGITALPODER${upd?` · Última actualización: ${upd}`:""}.`;
+
+// Vistas
+function route(){
+  const v = ["catalogo","fuentes","acerca"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "catalogo";
+  ["catalogo","fuentes","acerca"].forEach(k=>{$("#v-"+k).hidden = k!==v;});
+  document.querySelectorAll("nav.tabs a").forEach(a=>{ if(a.dataset.view===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+}
+window.addEventListener("hashchange",route); route(); render();
+}
+fetch("data/repositorio.json",{cache:"no-cache"}).then(r=>{if(!r.ok) throw new Error(r.status); return r.json();})
+  .then(start)
+  .catch(()=>{document.getElementById("results").innerHTML='<li class="empty">No se han podido cargar los datos del repositorio. Recarga la página en unos segundos.</li>';});
+</script>
+
+</body>
+</html>
