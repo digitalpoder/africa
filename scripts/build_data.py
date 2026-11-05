@@ -10,6 +10,9 @@ tipo de documento e idioma.
 import json, re, sys, unicodedata, datetime, pathlib
 import openpyxl
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from acceso_abierto import enriquecer
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "repositorio.json"
 EXTRA = ROOT / "data" / "referencias_complementarias.md"
@@ -171,6 +174,8 @@ def main(path):
             a=r["ref"], t=r["tit"], f=r["fuente"], k=r["tema"], m=r["metodo"], h=r["hall"],
             u=url, d="" if enl.startswith("http") else enl,
             g=geo_tags(r["pais"], r["tit"]), ty=doc_type(r["fuente"], r["ref"]), l=lang(r["tit"])))
+
+    enriquecer(data)
 
     fuentes, seen = [], set()
     ws = find_sheet(wb, DOC_SHEET)
