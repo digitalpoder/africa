@@ -437,7 +437,7 @@ $("#copyall").addEventListener("click",()=>{
 const ejeCount={}; R.forEach(r=>r.e.forEach(e=>ejeCount[e]=(ejeCount[e]||0)+1));
 const totE = Object.values(ejeCount).reduce((a,b)=>a+b,0);
 $("#distbar").innerHTML = Object.keys(EJES).map(e=>`<span style="width:${(100*(ejeCount[e]||0)/totE).toFixed(2)}%;background:var(--e${e})" title="${EJES[e]}: ${ejeCount[e]||0}"></span>`).join("");
-$("#legend").innerHTML = Object.keys(EJES).map(e=>`<button data-le="${e}"><i style="background:var(--e${e})"></i>${e}. ${EJE_SHORT[e]} <b>${ejeCount[e]||0}</b></button>`).join("") + `<button data-le="7"><i style="background:var(--e7)"></i>7. Documentación <b>${DATA.fuentes.length}</b></button>`;
+$("#legend").innerHTML = Object.keys(EJES).map(e=>`<button data-le="${e}"><i style="background:var(--e${e})"></i>${e}. ${EJE_SHORT[e]} <b>${ejeCount[e]||0}</b></button>`).join("");
 $("#legend").addEventListener("click",e=>{
   const b=e.target.closest("[data-le]"); if(!b) return; const k=+b.dataset.le;
   if(k===7){location.hash="fuentes";return;}
