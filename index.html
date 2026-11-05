@@ -14,7 +14,7 @@
   --paper:#fbfaff; --surface:#ffffff; --band:#f2eefb; --ink:#1b1530; --muted:#4a4462; --line:#d9d1ee; --soft:#efeaf9;
   --lila:#b09ede; --accent:#4a2c8f; --accent-ink:#ffffff; --accent-soft:#e9e2f8; --focus:#d18a00;
   --oa:#155a37; --oa-bg:#dcefe3;
-  --e1:#2a5a99; --e2:#94431b; --e3:#1a6e52; --e4:#6a3f9f; --e5:#8b2a4f; --e6:#5b5b10; --e7:#4b5563;
+  --e1:#f2a531; --e2:#e8622a; --e3:#d6304f; --e4:#d9439a; --e5:#8f55d6; --e6:#1fa58a; --e7:#6b7280;
   --display:"Lexend", "Atkinson Hyperlegible", system-ui, sans-serif;
   --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"Atkinson Hyperlegible Mono", ui-monospace, Consolas, monospace;
@@ -35,12 +35,12 @@ header.top .wrap{padding-block:28px 0;display:grid;gap:18px}
 .eyebrow{font-weight:700;font-size:.88rem;color:var(--muted)}
 
 .dist{display:grid;gap:8px}
-.distbar{display:flex;height:12px;border-radius:2px;overflow:hidden;background:var(--soft)}
+.distbar{display:flex;height:14px;border-radius:3px;overflow:hidden;background:var(--soft)}
 .distbar span{display:block;height:100%}
 .legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.9rem;color:var(--ink)}
 .legend button{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center;border-radius:3px}
 .legend button:hover{text-decoration:underline}
-.legend i{width:12px;height:12px;border-radius:2px;display:inline-block}
+.legend i{width:13px;height:13px;border-radius:3px;display:inline-block}
 .legend b{font-family:var(--mono);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
 
 nav.tabs{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
@@ -101,8 +101,8 @@ ol.results{list-style:none;margin:0;padding:0;display:grid}
 .rec:last-child{border-bottom:1px solid var(--line)}
 .meta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.9rem;color:var(--muted)}
 .yr{font-family:var(--mono);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
-.ej{display:inline-flex;align-items:center;gap:5px;font-weight:600}
-.ej i{width:11px;height:11px;border-radius:2px;display:inline-block}
+.ej{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--ink)}
+.ej i{width:13px;height:13px;border-radius:3px;display:inline-block}
 .geo{display:inline-flex;gap:4px;flex-wrap:wrap}
 .geo span{font-size:.85rem;padding:2px 8px;border-radius:4px;border:1px solid var(--line);color:var(--ink)}
 .geo span.f{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
@@ -357,7 +357,7 @@ function sorted(list){
 }
 
 function recHTML(r){
-  const ejes = r.e.map(e=>`<span class="ej" style="color:var(--e${e})"><i style="background:var(--e${e})"></i>${e}. ${EJE_SHORT[e]}</span>`).join("");
+  const ejes = r.e.map(e=>`<span class="ej"><i style="background:var(--e${e})"></i>${e}. ${EJE_SHORT[e]}</span>`).join("");
   const geo = r.g.map(g=>`<span class="${g==="gb"||g==="cv"?"f":""}">${GEO_SHORT[g]}</span>`).join("");
   const open = st.open.has(r.i);
   let det = "";
