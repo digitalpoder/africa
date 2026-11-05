@@ -362,8 +362,8 @@ function recHTML(r){
   const open = st.open.has(r.i);
   let det = "";
   if (open){
-    const rows = [["País o región",r.p],["Tema clave",r.k],["Método o datos",r.m],["Hallazgos clave",r.h],["Tipo",TIPO[r.ty]],["Idioma del título",LANG[r.l]],["Archivo del equipo",r.d?`${esc(r.d)} <span style="color:var(--muted)">(carpeta del proyecto en Drive)</span>`:""]]
-      .filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${k==="Archivo del equipo"?v:esc(v)}</dd>`).join("");
+    const rows = [["País o región",r.p],["Tema clave",r.k],["Método o datos",r.m],["Hallazgos clave",r.h],["Tipo",TIPO[r.ty]],["Idioma del título",LANG[r.l]]]
+      .filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
     const LIC = {"cc-by":"CC BY","cc-by-sa":"CC BY-SA","cc-by-nc":"CC BY-NC","cc-by-nc-sa":"CC BY-NC-SA","cc-by-nd":"CC BY-ND","cc-by-nc-nd":"CC BY-NC-ND","cc0":"CC0","public-domain":"dominio público"};
     const VER = {publishedVersion:"versión publicada",acceptedVersion:"versión aceptada del manuscrito",submittedVersion:"preprint"};
     const oaBtn = r.o ? (r.o.pdf ? `<a class="btn primary" href="${esc(r.o.pdf)}" target="_blank" rel="noopener">Descargar PDF</a>` : (r.o.url ? `<a class="btn primary" href="${esc(r.o.url)}" target="_blank" rel="noopener">Leer en acceso abierto</a>` : "")) : "";
