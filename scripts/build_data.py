@@ -172,7 +172,7 @@ def main(path):
         data.append(dict(
             i=i, e=sorted(r["ejes"]), p=r["pais"], y=year(r["anio"]), yr=r["anio"],
             a=r["ref"], t=r["tit"], f=r["fuente"], k=r["tema"], m=r["metodo"], h=r["hall"],
-            u=url, d="" if enl.startswith("http") else enl,
+            u=url,
             g=geo_tags(r["pais"], r["tit"]), ty=doc_type(r["fuente"], r["ref"]), l=lang(r["tit"])))
 
     enriquecer(data)
