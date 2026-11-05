@@ -51,6 +51,9 @@ jobs:
           fi
 
       - name: Generar los datos de la web
+        env:
+          # Correo de contacto que piden Crossref y Unpaywall para consultar DOI y acceso abierto
+          CONTACTO_EMAIL: ${{ vars.CONTACTO_EMAIL }}
         run: |
           cp data/repositorio.json /tmp/anterior.json 2>/dev/null || echo '{}' > /tmp/anterior.json
           python scripts/build_data.py matriz.xlsm
@@ -70,7 +73,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add data/repositorio.json
+          git add data/repositorio.json data/cache_doi.json data/cache_oa.json
           if git diff --cached --quiet; then
             echo "Nada que guardar"
           else
@@ -82,7 +85,7 @@ jobs:
         run: |
           mkdir _site
           cp -r index.html assets data _site/
-          rm -f _site/data/referencias_complementarias.md
+          rm -f _site/data/referencias_complementarias.md _site/data/cache_*.json
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
