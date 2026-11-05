@@ -28,22 +28,22 @@ a{color:var(--accent);text-underline-offset:2px}
 
 header.top{border-top:6px solid var(--lila);border-bottom:1px solid var(--line);background:var(--band)}
 header.top .wrap{padding-block:28px 0;display:grid;gap:18px}
-.brand{display:flex;gap:18px;align-items:flex-start}
+.brand{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
 .brand img{width:52px;height:auto;flex:none}
 .brand h1{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3.2vw,2.3rem);line-height:1.2;margin:0;text-wrap:balance;color:var(--accent)}
-.brand p{margin:4px 0 0;color:var(--muted);max-width:68ch}
+.brand p{margin:4px auto 0;color:var(--muted);max-width:68ch}
 .eyebrow{font-weight:700;font-size:.88rem;color:var(--muted)}
 
 .dist{display:grid;gap:8px}
 .distbar{display:flex;height:14px;border-radius:3px;overflow:hidden;background:var(--soft)}
 .distbar span{display:block;height:100%}
-.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.9rem;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-size:.9rem;color:var(--ink)}
 .legend button{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center;border-radius:3px}
 .legend button:hover{text-decoration:underline}
 .legend i{width:13px;height:13px;border-radius:3px;display:inline-block}
 .legend b{font-family:var(--mono);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
 
-nav.tabs{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
+nav.tabs{display:flex;justify-content:center;gap:4px;margin-top:6px;overflow-x:auto}
 nav.tabs a{padding:12px 16px;text-decoration:none;color:var(--muted);font-weight:700;font-size:1rem;border-bottom:4px solid transparent;white-space:nowrap}
 nav.tabs a[aria-current="page"]{color:var(--accent);border-color:var(--accent)}
 nav.tabs a:hover{color:var(--ink)}
