@@ -1,0 +1,92 @@
+name: Actualizar y publicar el repositorio
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 * * * *"   # cada hora, en el minuto 17
+  workflow_dispatch:        # botón «Run workflow» para actualizar en el momento
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install openpyxl==3.1.5
+
+      - name: Descargar la matriz de Google Drive
+        env:
+          MATRIZ_DRIVE_ID: ${{ secrets.MATRIZ_DRIVE_ID }}
+        run: |
+          if [ -z "$MATRIZ_DRIVE_ID" ]; then
+            echo "::error::Falta el secreto MATRIZ_DRIVE_ID (identificador del archivo de la matriz en Drive)."
+            exit 1
+          fi
+          curl -sSL --fail -o matriz.xlsm \
+            "https://drive.google.com/uc?export=download&id=${MATRIZ_DRIVE_ID}"
+          # Un .xlsm/.xlsx válido es un ZIP: empieza por "PK". Si Drive devuelve
+          # una página HTML (archivo no compartido o ID incorrecto), se detiene aquí
+          # y la web sigue mostrando la última versión buena.
+          if [ "$(head -c 2 matriz.xlsm)" != "PK" ]; then
+            echo "::error::Drive no ha devuelto la matriz. Comprueba que el archivo está compartido como «Cualquier persona con el enlace» y que el ID es correcto."
+            exit 1
+          fi
+
+      - name: Generar los datos de la web
+        run: |
+          cp data/repositorio.json /tmp/anterior.json 2>/dev/null || echo '{}' > /tmp/anterior.json
+          python scripts/build_data.py matriz.xlsm
+          python - <<'EOF'
+          import json
+          a = json.load(open("/tmp/anterior.json"))
+          b = json.load(open("data/repositorio.json"))
+          same = a.get("refs") == b["refs"] and a.get("fuentes") == b["fuentes"]
+          if same and "actualizado" in a:
+              # Sin cambios en la matriz: se conserva la fecha de la última actualización real
+              b["actualizado"] = a["actualizado"]
+              json.dump(b, open("data/repositorio.json", "w"), ensure_ascii=False, separators=(",", ":"))
+          print("Sin cambios en la matriz" if same else "La matriz ha cambiado")
+          EOF
+
+      - name: Guardar los datos en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/repositorio.json
+          if git diff --cached --quiet; then
+            echo "Nada que guardar"
+          else
+            git commit -m "Actualiza datos desde la matriz bibliográfica"
+            git push
+          fi
+
+      - name: Preparar la web
+        run: |
+          mkdir _site
+          cp -r index.html assets data _site/
+          rm -f _site/data/referencias_complementarias.md
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
