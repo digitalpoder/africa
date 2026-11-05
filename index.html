@@ -12,7 +12,7 @@
 /* Layout: catálogo de biblioteca — banda de cabecera con la distribución por ejes, carril de filtros fijo a la izquierda y fichas en lista a la derecha */
 :root{
   --paper:#f6f5f9; --surface:#ffffff; --ink:#1f1b2d; --muted:#5f5a70; --line:#dedae8; --soft:#eeebf5;
-  --accent:#5a3ea3; --accent-ink:#ffffff; --accent-soft:#ebe5f8; --focus:#c9a227;
+  --accent:#5a3ea3; --accent-ink:#ffffff; --accent-soft:#ebe5f8; --focus:#c9a227; --oa:#1f6b46; --oa-bg:#dff1e6;
   --e1:#3d6fb6; --e2:#b25a2b; --e3:#2e8a6e; --e4:#8a5bb8; --e5:#a33d5f; --e6:#7a7a2a; --e7:#4b5563;
   --display:"Newsreader", Georgia, "Times New Roman", serif;
   --body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -20,12 +20,12 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#15131c; --surface:#1d1a27; --ink:#ece9f4; --muted:#a6a0b8; --line:#332e42; --soft:#242030;
-  --accent:#b8a3f0; --accent-ink:#1a1530; --accent-soft:#2c2545; --focus:#e2c35a;
+  --accent:#b8a3f0; --accent-ink:#1a1530; --accent-soft:#2c2545; --focus:#e2c35a; --oa:#8fdcb0; --oa-bg:#173528;
   --e1:#7fa8e8; --e2:#e3925f; --e3:#5fc4a2; --e4:#bd94e6; --e5:#e07b9b; --e6:#c2c25a; --e7:#9aa3b2;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#15131c; --surface:#1d1a27; --ink:#ece9f4; --muted:#a6a0b8; --line:#332e42; --soft:#242030;
-  --accent:#b8a3f0; --accent-ink:#1a1530; --accent-soft:#2c2545; --focus:#e2c35a;
+  --accent:#b8a3f0; --accent-ink:#1a1530; --accent-soft:#2c2545; --focus:#e2c35a; --oa:#8fdcb0; --oa-bg:#173528;
   --e1:#7fa8e8; --e2:#e3925f; --e3:#5fc4a2; --e4:#bd94e6; --e5:#e07b9b; --e6:#c2c25a; --e7:#9aa3b2;
   color-scheme:dark}
 *{box-sizing:border-box}
@@ -119,6 +119,8 @@ ol.results{list-style:none;margin:0;padding:0;display:grid}
 .by{font-size:.9rem}
 .by b{font-weight:600}
 .by em{color:var(--muted)}
+.oa{font-size:.72rem;font-weight:600;padding:1px 7px;border-radius:3px;background:var(--oa-bg);color:var(--oa)}
+.oanote{margin:0;font-size:.82rem;color:var(--muted)}
 .tema{font-size:.86rem;color:var(--muted);margin:0;max-width:80ch}
 .detail{display:grid;gap:12px;margin-top:6px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
 .detail dl{margin:0;display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 18px}
@@ -198,6 +200,7 @@ img{max-width:100%}
           <fieldset id="f-l"><legend class="fl">Idioma del título</legend></fieldset>
           <fieldset>
             <legend class="fl">Acceso</legend>
+            <label class="opt"><input type="checkbox" id="f-oa"><span>Con PDF en acceso abierto</span><span class="c" id="c-oa"></span></label>
             <label class="opt"><input type="checkbox" id="f-url"><span>Solo con enlace o DOI</span><span class="c" id="c-url"></span></label>
           </fieldset>
         </div>
@@ -242,7 +245,7 @@ img{max-width:100%}
         <ol id="ejes-list"></ol>
         <p>Una referencia puede aparecer en más de un eje. El ámbito geográfico se asigna a partir del país o la región que estudia el texto, y el foco del proyecto marca los trabajos que tratan Guinea-Bisáu o Cabo Verde.</p>
         <h2>Criterios</h2>
-        <p>La búsqueda prioriza la producción de los últimos cinco años (2020–2026), con algunas obras anteriores de referencia. El repositorio no aloja textos completos de terceros. Cuando existe, cada ficha enlaza al DOI o a la página del editor; en los demás casos ofrece una búsqueda directa en Google Académico.</p>
+        <p>La búsqueda prioriza la producción de los últimos cinco años (2020–2026), con algunas obras anteriores de referencia. El repositorio no aloja textos completos de terceros. Cuando un texto tiene una versión legal en acceso abierto, la ficha ofrece el botón «Descargar PDF», que lleva al PDF publicado por el editor o por un repositorio institucional. Esa información se obtiene de Unpaywall y se revisa cada mes. En los demás casos la ficha enlaza al DOI o a la página del editor, o propone una búsqueda en Google Académico.</p>
         <h2>Proponer una referencia</h2>
         <p>Si conoces un trabajo pertinente que no aparece aquí, envíalo al equipo de DIGITALPODER con su referencia completa y, si es posible, su DOI.</p>
         <p class="fine">Proyecto «Procesos de digitalización, desarrollo e igualdad de género en África: Bancas móviles y empoderamiento femenino digital» (DIGITALPODER), referencia PID2024-161343OB-I00. Ministerio de Ciencia, Innovación y Universidades, Agencia Estatal de Investigación. Cofinanciado por la Unión Europea. Universidad de Granada, grupo AFRICAInEs. Ejecución: septiembre de 2025 a agosto de 2028.</p>
@@ -268,7 +271,7 @@ R.forEach(r => { r._s = norm([r.a,r.t,r.f,r.k,r.p,r.h,r.m].join(" ")); });
 const YEARS = [2019,2020,2021,2022,2023,2024,2025,2026];
 const yKey = y => y==null ? null : (y<2020 ? 2019 : (y>2026 ? 2026 : y));
 
-const st = {q:"", e:new Set(), g:new Set(), y:new Set(), ty:new Set(), l:new Set(), url:false, sort:"new", shown:30, open:new Set()};
+const st = {q:"", e:new Set(), g:new Set(), y:new Set(), ty:new Set(), l:new Set(), url:false, oa:false, sort:"new", shown:30, open:new Set()};
 
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
@@ -280,6 +283,7 @@ function matches(r, skip){
   if (skip!=="ty" && st.ty.size && !st.ty.has(r.ty)) return false;
   if (skip!=="l" && st.l.size && !st.l.has(r.l)) return false;
   if (skip!=="url" && st.url && !r.u) return false;
+  if (skip!=="oa" && st.oa && !r.o) return false;
   return true;
 }
 
@@ -320,11 +324,12 @@ document.querySelectorAll("[data-focus]").forEach(b=>b.addEventListener("click",
 function syncFocus(){document.querySelectorAll("[data-focus]").forEach(b=>b.setAttribute("aria-pressed",st.g.has(b.dataset.focus)))}
 
 $("#f-url").addEventListener("change",e=>{st.url=e.target.checked; st.shown=30; render();});
+$("#f-oa").addEventListener("change",e=>{st.oa=e.target.checked; st.shown=30; render();});
 let qt; $("#q").addEventListener("input",e=>{clearTimeout(qt); qt=setTimeout(()=>{st.q=e.target.value.trim(); st.shown=30; render();},140);});
 $("#sort").addEventListener("change",e=>{st.sort=e.target.value; render();});
 $("#more").addEventListener("click",()=>{st.shown+=30; render();});
 $("#clear").addEventListener("click",()=>{
-  st.q="";$("#q").value="";["e","g","y","ty","l"].forEach(k=>st[k].clear());st.url=false;$("#f-url").checked=false;
+  st.q="";$("#q").value="";["e","g","y","ty","l"].forEach(k=>st[k].clear());st.url=false;$("#f-url").checked=false;st.oa=false;$("#f-oa").checked=false;
   document.querySelectorAll(".fgroups input[type=checkbox]").forEach(c=>c.checked=false); syncFocus(); st.shown=30; render();
 });
 $("#ftoggle").addEventListener("click",()=>{
@@ -366,12 +371,17 @@ function recHTML(r){
   if (open){
     const rows = [["País o región",r.p],["Tema clave",r.k],["Método o datos",r.m],["Hallazgos clave",r.h],["Tipo",TIPO[r.ty]],["Idioma del título",LANG[r.l]],["Archivo del equipo",r.d?`${esc(r.d)} <span style="color:var(--muted)">(carpeta del proyecto en Drive)</span>`:""]]
       .filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${k==="Archivo del equipo"?v:esc(v)}</dd>`).join("");
+    const LIC = {"cc-by":"CC BY","cc-by-sa":"CC BY-SA","cc-by-nc":"CC BY-NC","cc-by-nc-sa":"CC BY-NC-SA","cc-by-nd":"CC BY-ND","cc-by-nc-nd":"CC BY-NC-ND","cc0":"CC0","public-domain":"dominio público"};
+    const VER = {publishedVersion:"versión publicada",acceptedVersion:"versión aceptada del manuscrito",submittedVersion:"preprint"};
+    const oaBtn = r.o ? (r.o.pdf ? `<a class="btn primary" href="${esc(r.o.pdf)}" target="_blank" rel="noopener">Descargar PDF</a>` : (r.o.url ? `<a class="btn primary" href="${esc(r.o.url)}" target="_blank" rel="noopener">Leer en acceso abierto</a>` : "")) : "";
+    const oaNote = r.o ? `<p class="oanote">Versión legal en acceso abierto${r.o.ver&&VER[r.o.ver]?`, ${VER[r.o.ver]}`:""}${r.o.lic?` · licencia ${LIC[r.o.lic]||esc(r.o.lic)}`:""}. El enlace lleva a ${r.o.host==="repository"?"un repositorio":"la web del editor"}; este repositorio no aloja copias.</p>` : "";
     const link = r.u ? `<a class="btn primary" href="${esc(r.u)}" target="_blank" rel="noopener">${/doi\.org/.test(r.u)?"Abrir DOI":"Abrir enlace"}</a>`
                      : `<a class="btn primary" href="${scholar(r)}" target="_blank" rel="noopener">Buscar en Google Académico</a>`;
-    det = `<div class="detail" id="d-${r.i}"><dl>${rows}</dl><div class="actions">${link}<button class="btn" data-cite="${r.i}">Copiar referencia</button></div></div>`;
+    const linkCls = oaBtn ? link.replace('class="btn primary"','class="btn"') : link;
+    det = `<div class="detail" id="d-${r.i}"><dl>${rows}</dl>${oaNote}<div class="actions">${oaBtn}${linkCls}<button class="btn" data-cite="${r.i}">Copiar referencia</button></div></div>`;
   }
   return `<li class="rec">
-    <div class="meta"><span class="yr">${esc(r.yr||"s. f.")}</span>${ejes}<span class="geo">${geo}</span></div>
+    <div class="meta"><span class="yr">${esc(r.yr||"s. f.")}</span>${ejes}<span class="geo">${geo}</span>${r.o?`<span class="oa">${r.o.pdf?"PDF abierto":"Acceso abierto"}</span>`:""}</div>
     <h3><button data-open="${r.i}" aria-expanded="${open}" aria-controls="d-${r.i}">${esc(r.t)}</button></h3>
     <div class="by"><b>${esc(r.a)}</b>${r.f?` · <em>${esc(r.f)}</em>`:""}</div>
     ${r.k && !open?`<p class="tema">${esc(r.k)}</p>`:""}
@@ -393,6 +403,7 @@ function render(){
   const yl = R.filter(r=>matches(r,"y")); const yc={}; yl.forEach(r=>{const k=yKey(r.y); if(k) yc[k]=(yc[k]||0)+1;});
   document.querySelectorAll(".yb").forEach(b=>{const y=+b.dataset.y; const n=yc[y]||0; b.setAttribute("aria-pressed",st.y.has(y)); b.querySelector(".bar span").style.height=Math.max(2,Math.round(24*n/maxY))+"px"; b.title=`${n} referencias`; b.setAttribute("aria-label",`${y===2019?"2019 o antes":y}: ${n} referencias`);});
   $("#c-url").textContent = R.filter(r=>matches(r,"url")&&r.u).length;
+  $("#c-oa").textContent = R.filter(r=>matches(r,"oa")&&r.o).length;
 
   const s = sorted(res);
   $("#count").innerHTML = `<b>${res.length}</b> ${res.length===1?"referencia":"referencias"}${res.length!==R.length?` de ${R.length}`:""}`;
@@ -408,6 +419,7 @@ function render(){
   st.ty.forEach(v=>chips.push(["ty",v,TIPO[v]]));
   st.l.forEach(v=>chips.push(["l",v,LANG[v]]));
   if(st.url) chips.push(["url",null,"Con enlace o DOI"]);
+  if(st.oa) chips.push(["oa",null,"Con PDF en acceso abierto"]);
   $("#chips").innerHTML = chips.map(([k,v,l])=>`<button class="chip" data-ck="${k}" data-cv="${v??""}" aria-label="Quitar filtro ${esc(l)}">${esc(l)} <span aria-hidden="true">×</span></button>`).join("");
   $("#clear").hidden = !chips.length;
 }
@@ -416,6 +428,7 @@ $("#chips").addEventListener("click",e=>{
   const b=e.target.closest(".chip"); if(!b) return; const k=b.dataset.ck, v=b.dataset.cv;
   if(k==="q"){st.q="";$("#q").value="";}
   else if(k==="url"){st.url=false;$("#f-url").checked=false;}
+  else if(k==="oa"){st.oa=false;$("#f-oa").checked=false;}
   else { const val = (k==="e"||k==="y")?+v:v; st[k].delete(val); const cb=$(`#${k}-${v}`); if(cb) cb.checked=false; if(k==="g") syncFocus(); }
   st.shown=30; render();
 });
