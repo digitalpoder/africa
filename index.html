@@ -7,12 +7,12 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Lexend:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Lexend:wght@500;600&family=Montserrat:wght@500&display=swap">
 <style>
 /* Layout: catálogo de biblioteca — cabecera lila con la distribución por ejes, carril de filtros a la izquierda y fichas en lista. Tema claro único, pensado para lectura fácil (contraste AA/AAA, letra grande, Atkinson Hyperlegible). */
 :root{
   --paper:#fbfaff; --surface:#ffffff; --band:#f2eefb; --ink:#1b1530; --muted:#4a4462; --line:#d9d1ee; --soft:#efeaf9;
-  --lila:#b09ede; --accent:#4a2c8f; --accent-ink:#ffffff; --accent-soft:#e9e2f8; --focus:#d18a00;
+  --lila:#b09ede; --logo:#7a62c0; --accent:#4a2c8f; --accent-ink:#ffffff; --accent-soft:#e9e2f8; --focus:#d18a00;
   --oa:#155a37; --oa-bg:#dcefe3;
   --e1:#f2a531; --e2:#e8622a; --e3:#d6304f; --e4:#d9439a; --e5:#8f55d6; --e6:#1fa58a; --e7:#6b7280;
   --display:"Lexend", "Atkinson Hyperlegible", system-ui, sans-serif;
@@ -28,11 +28,13 @@ a{color:var(--accent);text-underline-offset:2px}
 
 header.top{border-top:6px solid var(--lila);border-bottom:1px solid var(--line);background:var(--band)}
 header.top .wrap{padding-block:28px 0;display:grid;gap:18px}
-.brand{display:grid;grid-template-columns:130px minmax(0,1fr) 130px;gap:16px;align-items:center;text-align:center}
+.brand{display:grid;grid-template-columns:140px minmax(0,1fr) 140px;gap:16px;align-items:center;text-align:center}
 .brand::after{content:""}
-@media (max-width:600px){.brand{grid-template-columns:72px minmax(0,1fr);gap:12px}.brand::after{display:none}}
-.brand img{width:120px;height:auto;justify-self:start}
-@media (max-width:600px){.brand img{width:72px}}
+@media (max-width:600px){.brand{grid-template-columns:84px minmax(0,1fr);gap:10px}.brand::after{display:none}}
+.logo{display:grid;justify-items:center;gap:6px;justify-self:start}
+.logo img{width:64px;height:auto}
+.logo span{font-family:"Montserrat",var(--body);font-weight:500;font-size:.8rem;letter-spacing:.2em;margin-right:-.2em;color:var(--logo);white-space:nowrap}
+@media (max-width:600px){.logo img{width:44px}.logo span{font-size:.58rem;letter-spacing:.14em;margin-right:-.14em}}
 .brand h1{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3.2vw,2.3rem);line-height:1.2;margin:0;text-wrap:balance;color:var(--accent)}
 .brand p{margin:4px auto 0;color:var(--muted);max-width:68ch}
 .eyebrow{font-weight:700;font-size:.88rem;color:var(--muted)}
@@ -157,7 +159,7 @@ img{max-width:100%}
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <img src="assets/digitalpoder.png" alt="DIGITALPODER">
+      <div class="logo" aria-label="DIGITALPODER"><img src="assets/digitalpoder.png" alt=""><span aria-hidden="true">DIGITALPODER</span></div>
       <div>
         <div class="eyebrow">DIGITALPODER · Universidad de Granada</div>
         <h1>Repositorio temático de digitalización, género y África</h1>
